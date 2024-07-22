@@ -1,4 +1,5 @@
-import { forwardRef, useRef } from "react";
+import { forwardRef, useContext, useRef } from "react";
+import { ProjectContext } from "./store/ProjectContextProvider";
 
 const Inputcells = forwardRef(function Inputcells({ text, type }, ref) {
   const cssClasses =
@@ -17,10 +18,11 @@ const Inputcells = forwardRef(function Inputcells({ text, type }, ref) {
   );
 });
 
-export default function Input({ onAdd, onCancel }) {
+export default function Input() {
   const title = useRef();
   const description = useRef();
   const dueDate = useRef();
+  const { save, cancel } = useContext(ProjectContext);
 
   function handleSave() {
     const enteredTitle = title.current.value;
@@ -40,14 +42,14 @@ export default function Input({ onAdd, onCancel }) {
       description: enteredDescription,
       dueDate: entereddueDate,
     };
-    onAdd(data);
+    save(data);
   }
 
   return (
     <div className="w-[35rem] mt-16">
       <menu className="flex items-center justify-end gap-4 my-4">
         <button
-          onClick={onCancel}
+          onClick={cancel}
           className="text-stone-800 hover:text-stone-950"
         >
           Cancel

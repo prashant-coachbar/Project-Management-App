@@ -1,13 +1,15 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
+import { ProjectContext } from "../store/ProjectContextProvider";
 
 export default function Tasks({ onAddTask, tasks, onClear }) {
   const task = useRef();
+  const { addTask, deleteTask } = useContext(ProjectContext);
   function handleAdd() {
     const text = task.current.value;
     if (text === "") {
       return;
     }
-    onAddTask(text);
+    addTask(text);
     task.current.value = "";
   }
   return (
@@ -32,7 +34,7 @@ export default function Tasks({ onAddTask, tasks, onClear }) {
                 {item.text}{" "}
                 <button
                   className="text-stone-700 hover:text-red-500"
-                  onClick={() => onClear(item.id)}
+                  onClick={() => deleteTask(item.id)}
                 >
                   Clear
                 </button>
