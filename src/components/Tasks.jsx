@@ -11,6 +11,7 @@ export default function Tasks({ onAddTask, tasks, onClear }) {
     }
     addTask(text);
     task.current.value = "";
+    trackify.trackEvent("add-task");
   }
   return (
     <>

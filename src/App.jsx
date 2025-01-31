@@ -8,7 +8,7 @@ import { ProjectContext } from "./store/ProjectContextProvider";
 function App() {
   const { selectedProjectId } = useContext(ProjectContext);
 
-  console.log(selectedProjectId);
+  // console.log(selectedProjectId);
 
   let content = <Project />;
   if (selectedProjectId === undefined) {

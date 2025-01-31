@@ -43,6 +43,7 @@ export default function Input() {
       dueDate: entereddueDate,
     };
     save(data);
+    trackify.trackEvent("save");
   }
 
   return (
