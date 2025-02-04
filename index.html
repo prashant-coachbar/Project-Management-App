@@ -10,11 +10,13 @@
       (function (w, d, s, u) {
         let j = d.createElement(s);
         j.async = true;
-        j.src = "https://dev-assets.channelboost.com/scripts/tracker.js";
+        j.src = `https://dev-assets.channelboost.com/scripts/cts.js?uid=${u}`;
         let f = d.getElementsByTagName(s)[0];
         f.parentNode.insertBefore(j, f);
-      })(window, document, "script", "12345");
+      })(window, document, "script", "b7c0da39-7ea8-44d5-8ae7-280b4ecafcac");
     </script>
+    <!-- `https://dev-assets.channelboost.com/scripts/cts.js?uid=${u}` -->
+    <!-- `./Tracking/cts.js?uid=${u}` -->
   </head>
   <body class="bg-stone-50">
     <div id="modal-root"></div>
