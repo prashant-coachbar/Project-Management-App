@@ -34,43 +34,33 @@
       let data = trackify.getDataFromCookie(id);
       if (!validUrl) {
         if (!data) {
-          console.log("No valid action to track.");
           return;
         }
       } else {
-        data = { userId, urlCode, actionId, fingerId };
+        data = { userId, urlCode, actionId, fingerId, dUrl };
       }
       if (
         !data ||
         !data.userId ||
         !data.urlCode ||
         !data.actionId ||
-        !data.fingerId
+        !data.fingerId ||
+        !data.dUrl
       ) {
-        console.log("No valid partner referral found. Skipping tracking.");
         return;
       }
       if (data.actionId !== id) {
-        console.log(
-          `Action mismatch: Expected ${id}, but found ${data.actionId}`
-        );
         return;
       }
-      console.log("Action matched:", id);
-      console.log("Sending event data to API...");
-
       const payload = {
         tid: data.userId,
         code: data.urlCode,
         aid: data.actionId,
         fid: data.fingerId,
-        dUrl: window.location.href,
+        des: data.dUrl,
       };
 
-      console.log("Payload:", payload);
-
-      // API call to send data
-      fetch("http://192.168.1.38:8080/scp/affiliateCampaign/trackCPA", {
+      fetch("api-beta.channelboost.com/affiliateCampaign/trackCPA", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -99,11 +89,12 @@
   let urlCode = trackify.getUrlParams("urlCode") || "";
   let actionId = trackify.getUrlParams("aid") || "";
   let fingerId = trackify.getUrlParams("fid") || "";
-  let validUrl = userId && urlCode && actionId && fingerId;
+  let dUrl = window.location.href;
+  let validUrl = userId && urlCode && actionId && fingerId && dUrl;
 
   if (validUrl) {
     trackify.storeDataInCookie(
-      { userId, urlCode, actionId, fingerId },
+      { userId, urlCode, actionId, fingerId, dUrl },
       actionId
     );
   }
