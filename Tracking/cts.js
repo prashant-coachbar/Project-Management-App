@@ -1,17 +1,15 @@
 (function () {
-  console.log("PRM Tracking Script Loaded...");
-
   const trackify = {
-    storeDataInCookie: function (data) {
-      const maxAge = 86400; // Store for 24 hours
+    storeDataInCookie: function (data, actionId) {
+      const maxAge = 86400;
       const serializedData = JSON.stringify(data);
-      document.cookie = `trackingData=${encodeURIComponent(
+      document.cookie = `td${actionId}=${encodeURIComponent(
         serializedData
       )}; path=/; max-age=${maxAge}`;
     },
 
-    getDataFromCookie: function () {
-      const name = "trackingData=";
+    getDataFromCookie: function (actionId) {
+      const name = `td${actionId}=`;
       const decodedCookie = decodeURIComponent(document.cookie);
       const cookieArray = decodedCookie.split(";");
       for (let i = 0; i < cookieArray.length; i++) {
@@ -23,47 +21,73 @@
       return null;
     },
 
+    deleteCookie: function (actionId) {
+      document.cookie = `td${actionId}=; path=/; max-age=0`;
+    },
+
     getUrlParams: function (param) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
     },
 
     trackEvent: function (id) {
-      if (actionId === id) {
-        console.log("Action matched:", id);
-        console.log("Sending event data to API...");
-        const payload = {
-          userId,
-          urlCode,
-          actionId,
-          fingerId,
-          destinationUrl: window.location.href,
-          urlDomain: window.location.hostname,
-        };
-        console.log("Payload:", payload);
-
-        //API call to send data
-        // fetch("https://api.yourprm.com/track-event", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify(data),
-        // }).then((res) => console.log("Event sent:", eventType));
+      let data = trackify.getDataFromCookie(id);
+      if (!validUrl) {
+        if (!data) {
+          console.log("No valid action to track.");
+          return;
+        }
       } else {
-        console.log("Sorry Action doesn't match");
+        data = { userId, urlCode, actionId, fingerId };
       }
+      if (
+        !data ||
+        !data.userId ||
+        !data.urlCode ||
+        !data.actionId ||
+        !data.fingerId
+      ) {
+        console.log("No valid partner referral found. Skipping tracking.");
+        return;
+      }
+      if (data.actionId !== id) {
+        console.log(
+          `Action mismatch: Expected ${id}, but found ${data.actionId}`
+        );
+        return;
+      }
+      console.log("Action matched:", id);
+      console.log("Sending event data to API...");
+
+      const payload = {
+        tid: data.userId,
+        code: data.urlCode,
+        aid: data.actionId,
+        fid: data.fingerId,
+        dUrl: window.location.href,
+      };
+
+      console.log("Payload:", payload);
+
+      // API call to send data
+      fetch("http://localhost:8080/sc/affiliateCampaign/trackCPA", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then((res) => console.log("Event sent successfully:", res.status))
+        .catch((err) => console.error("Error sending event:", err));
+      trackify.deleteCookie(id);
     },
   };
 
-  window.trackify = trackify; // Expose to global scope
+  window.trackify = trackify;
 
-  // Extract query parameters from the script tag
   function getScriptParams() {
     let scripts = document.getElementsByTagName("script");
     for (let script of scripts) {
-      console.log("Checking script:", script.src);
       if (script.src.includes("cts.js")) {
         let urlParams = new URL(script.src).searchParams;
-        console.log(urlParams.get("uid"));
         return {
           userId: urlParams.get("uid"),
         };
@@ -71,28 +95,16 @@
     }
     return null;
   }
-  let validUrl = true;
   let userId = getScriptParams()?.userId;
   let urlCode = trackify.getUrlParams("urlCode") || "";
   let actionId = trackify.getUrlParams("aid") || "";
   let fingerId = trackify.getUrlParams("fid") || "";
+  let validUrl = userId && urlCode && actionId && fingerId;
 
-  if (userId && urlCode && actionId && fingerId) {
-    trackify.storeDataInCookie({ userId, urlCode, actionId, fingerId });
-  } else {
-    console.log("Fetching data from cookie");
-    const data = trackify.getDataFromCookie();
-    if (data) {
-      userId = data?.userId;
-      urlCode = data?.urlCode;
-      actionId = data?.actionId;
-      fingerId = data?.fingerId;
-    } else {
-      validUrl = false;
-    }
+  if (validUrl) {
+    trackify.storeDataInCookie(
+      { userId, urlCode, actionId, fingerId },
+      actionId
+    );
   }
-  console.log("User ID:", userId);
-  console.log("UrlCode:", urlCode);
-  console.log("Action Id:", actionId);
-  console.log("Finger Id:", fingerId);
 })();
