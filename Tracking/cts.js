@@ -70,7 +70,7 @@
       console.log("Payload:", payload);
 
       // API call to send data
-      fetch("http://localhost:8080/sc/affiliateCampaign/trackCPA", {
+      fetch("http://192.168.1.37:8080/sc/affiliateCampaign/trackCPA", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
