@@ -60,7 +60,7 @@
         des: data.dUrl,
       };
 
-      fetch("api-beta.channelboost.com/affiliateCampaign/trackCPA", {
+      fetch("https://api-beta.channelboost.com/sc/affiliateCampaign/trackCPA", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

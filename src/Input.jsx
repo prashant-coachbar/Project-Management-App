@@ -43,7 +43,7 @@ export default function Input() {
       dueDate: entereddueDate,
     };
     save(data);
-    trackify.trackEvent("purchase");
+    trackify.trackEvent("save-id");
   }
 
   return (
