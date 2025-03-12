@@ -1,4 +1,6 @@
 (function () {
+  console.log("cts.js loaded");
+
   const trackify = {
     storeDataInCookie: function (data, actionId) {
       const maxAge = 86400;
@@ -30,7 +32,7 @@
       return urlParams.get(param);
     },
 
-    trackEvent: function (id) {
+    trackEvent: function (id, tid = null) {
       let data = trackify.getDataFromCookie(id);
       if (!validUrl) {
         if (!data) {
@@ -39,6 +41,7 @@
       } else {
         data = { userId, urlCode, actionId, fingerId, dUrl };
       }
+      console.log("Sending event:", data, userId);
       if (
         !data ||
         !data.userId ||
@@ -52,6 +55,12 @@
       if (data.actionId !== id) {
         return;
       }
+
+      if (userId === "provider") {
+        data.userId = tid;
+        data.dUrl = null;
+      }
+
       const payload = {
         tid: data.userId,
         code: data.urlCode,
@@ -92,7 +101,7 @@
   let dUrl = window.location.href;
   let validUrl = userId && urlCode && actionId && fingerId && dUrl;
 
-  if (validUrl) {
+  if (validUrl && userId !== "provider") {
     trackify.storeDataInCookie(
       { userId, urlCode, actionId, fingerId, dUrl },
       actionId
