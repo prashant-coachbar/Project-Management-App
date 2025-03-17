@@ -1,6 +1,4 @@
 (function () {
-  console.log("cts.js loaded");
-
   const trackify = {
     storeDataInCookie: function (data, actionId) {
       const maxAge = 86400;
@@ -32,7 +30,7 @@
       return urlParams.get(param);
     },
 
-    trackEvent: function (id, tid = null) {
+    trackEvent: function (id, formData = {}) {
       let data = trackify.getDataFromCookie(id);
       if (!validUrl) {
         if (!data) {
@@ -41,7 +39,6 @@
       } else {
         data = { userId, urlCode, actionId, fingerId, dUrl };
       }
-      console.log("Sending event:", data, userId);
       if (
         !data ||
         !data.userId ||
@@ -57,7 +54,7 @@
       }
 
       if (userId === "provider") {
-        data.userId = tid;
+        data.userId = formData?.tid;
         data.dUrl = null;
       }
 
@@ -68,6 +65,10 @@
         fid: data.fingerId,
         des: data.dUrl,
       };
+      if (formData?.leadId) {
+        payload.aid = formData.leadId;
+        payload.formId = data.actionId;
+      }
 
       fetch("https://api-beta.channelboost.com/sc/affiliateCampaign/trackCPA", {
         method: "POST",
