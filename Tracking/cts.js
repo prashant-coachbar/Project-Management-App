@@ -70,7 +70,7 @@
         payload.formId = data.actionId;
       }
 
-      fetch("http://localhost:8080/sc/affiliateCampaign/trackCPA", {
+      fetch("https://api-beta.channelboost.com/sc/affiliateCampaign/trackCPA", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -93,7 +93,7 @@
             err.message.includes("Tracking failed");
 
           if (isRetriable && attempt < 3) {
-            const retryDelay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+            const retryDelay = 10 * attempt * 1000;
             setTimeout(() => {
               trackify.trackEvent(id, formData, attempt + 1);
             }, retryDelay);
