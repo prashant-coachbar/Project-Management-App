@@ -30,7 +30,7 @@
       return urlParams.get(param);
     },
 
-    trackEvent: function (id, formData = {}) {
+    trackEvent: function (id, formData = {}, attempt = 1) {
       let data = trackify.getDataFromCookie(id);
       if (!validUrl) {
         if (!data) {
@@ -70,14 +70,37 @@
         payload.formId = data.actionId;
       }
 
-      fetch("https://api-beta.channelboost.com/sc/affiliateCampaign/trackCPA", {
+      fetch("http://localhost:8080/sc/affiliateCampaign/trackCPA", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
-        .then((res) => console.log("Event sent successfully:", res.status))
-        .catch((err) => console.error("Error sending event:", err));
-      trackify.deleteCookie(id);
+        .then(async (res) => {
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errorText}`);
+          }
+          console.log("Event sent successfully:", res.status);
+          trackify.deleteCookie(id);
+        })
+        .catch((err) => {
+          console.error(
+            `Error sending event (Attempt ${attempt}):`,
+            err.message
+          );
+          const isRetriable =
+            err.message.includes("500") ||
+            err.message.includes("Tracking failed");
+
+          if (isRetriable && attempt < 3) {
+            const retryDelay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+            setTimeout(() => {
+              trackify.trackEvent(id, formData, attempt + 1);
+            }, retryDelay);
+          } else {
+            console.error("Max retries reached, event tracking failed.");
+          }
+        });
     },
   };
 
