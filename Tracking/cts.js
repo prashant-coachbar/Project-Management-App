@@ -31,6 +31,8 @@
     },
 
     trackEvent: function (id, formData = {}, attempt = 1) {
+      console.log("Tracking event:", id, formData, attempt);
+
       let data = trackify.getDataFromCookie(id);
       if (!validUrl) {
         if (!data) {

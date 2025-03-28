@@ -6,7 +6,7 @@ export default function NoProject() {
   const { addProject } = useContext(ProjectContext);
   return (
     <div className="mt-24 text-center w-2/3">
-      <img
+      {/* <img
         className="w-16 h-16 object-contain mx-auto"
         src={noProject}
         alt="task logo"
@@ -22,8 +22,11 @@ export default function NoProject() {
         className="px-6 py-2 rounded-md bg-stone-800 text-stone-50 hover:bg-stone-950"
       >
         Create New Project
-      </button>
+      </button> */}
       {/* <div id="prm-lead-form" style={{ height: "600px", width: "100%" }}></div> */}
+      <div id="channelboost-form-container-123"></div>
+
+      {/* <div id="channelboost-form-container-456"></div> */}
     </div>
   );
 }

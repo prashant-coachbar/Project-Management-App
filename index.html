@@ -15,20 +15,53 @@
       (function (w, d, s, u) {
         let j = d.createElement(s);
         j.async = true;
-        j.src = "https://dev-assets.channelboost.com/scripts/cts.js?uid=" + u;
+        j.src = "./Tracking/cts.js?uid=" + u;
         let f = d.getElementsByTagName(s)[0];
         f.parentNode.insertBefore(j, f);
       })(window, document, "script", "2efd7bd4-7d45-44a2-b151-87178d1d5820");
+    </script>
+    <script>
+      (function (w, d, s, u, i) {
+        let j = d.createElement(s);
+        j.async = true;
+        j.src = "./Tracking/embeddingform.js?uid=" + u + "&formId=" + i;
+        let f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(j, f);
+      })(
+        window,
+        document,
+        "script",
+        "2efd7bd4-7d45-44a2-b151-87178d1d5820",
+        "123"
+      );
     </script>
     <!-- `https://dev-assets.channelboost.com/scripts/cts.js?uid=${u}` -->
     <!-- `./Tracking/cts.js?uid=${u}` -->
 
     <!-- "https://dev-assets.channelboost.com/scripts/cts.js?uid=" -->
     <!-- ./cts.js?uid= -->
+
+    <!-- <script src="./Tracking/embeddingform.js" defer></script> -->
   </head>
   <body class="bg-stone-50">
     <div id="modal-root"></div>
-    <div id="root"></div>
+    <div id="root">eeigrmi</div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- <script src="./Tracking/embeddingform.js?" defer></script> -->
+    <!-- <script>
+      (function (w, d, s, u, i) {
+        let j = d.createElement(s);
+        j.async = true;
+        j.src = "./Tracking/embeddingform.js?uid=" + u + "&formId=" + i;
+        let f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(j, f);
+      })(
+        window,
+        document,
+        "script",
+        "2efd7bd4-7d45-44a2-b151-87178d1d5820",
+        "123"
+      );
+    </script> -->
   </body>
 </html>
