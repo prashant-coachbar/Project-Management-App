@@ -5,7 +5,7 @@ import { ProjectContext } from "../store/ProjectContextProvider";
 export default function NoProject() {
   const { addProject } = useContext(ProjectContext);
   return (
-    <div className="mt-24 text-center w-2/3">
+    <div style={{ width: "100%" }}>
       {/* <img
         className="w-16 h-16 object-contain mx-auto"
         src={noProject}
@@ -24,9 +24,10 @@ export default function NoProject() {
         Create New Project
       </button> */}
       {/* <div id="prm-lead-form" style={{ height: "600px", width: "100%" }}></div> */}
-      <div id="channelboost-form-container-123"></div>
-
+      {/* <div id="channelboost-form-container-123"></div> */}
+      {/* <div id="referral-widget"></div> */}
       {/* <div id="channelboost-form-container-456"></div> */}
+      <div id="5bdf3277-58dc-845b-26ab-0196c93eb357"></div>
     </div>
   );
 }
