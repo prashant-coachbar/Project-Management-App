@@ -11,9 +11,72 @@
     }
     return null;
   }
+  function getUrlParams(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+  }
   const TENANT_ID = getScriptParams()?.userId;
   const API_PREFIX = "https://api-beta.channelboost.com";
   const LOCAL_API_PREFIX = "http://localhost:8080";
+  const trackify = {
+    trackLead: function (formData = {}, attempt = 1) {
+      console.log("Tracking event:", formData, attempt);
+
+      const referrerCode = getUrlParams("urlCode");
+      const firstName = formData?.firstName || "";
+      const lastName = formData?.lastName || "";
+      const email = formData?.email || "";
+      const companyName = formData?.companyName || "";
+
+      let validData =
+        referrerCode && firstName && lastName && email && companyName;
+
+      if (!validData) {
+        console.log("Data has missing fields or is incorrect");
+        return;
+      }
+
+      const payload = {
+        referrerCode,
+        firstName,
+        lastName,
+        email,
+        companyName,
+      };
+
+      fetch(`${API_PREFIX}/sc/referralProgram/createLead`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then(async (res) => {
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errorText}`);
+          }
+          console.log("Event sent successfully:", res.status);
+        })
+        .catch((err) => {
+          console.error(
+            `Error sending event (Attempt ${attempt}):`,
+            err.message
+          );
+          const isRetriable =
+            err.message.includes("500") ||
+            err.message.includes("Tracking failed");
+
+          if (isRetriable && attempt < 3) {
+            const retryDelay = 10 * attempt * 1000;
+            setTimeout(() => {
+              trackify.trackLead(formData, attempt + 1);
+            }, retryDelay);
+          } else {
+            console.error("Max retries reached, event tracking failed.");
+          }
+        });
+    },
+  };
+  window.trackify = trackify;
 
   function injectStyles() {
     const style = document.createElement("style");
@@ -306,10 +369,11 @@
           const urlCode = participantData?.referrerCode;
 
           if (urlCode) {
-            const separator = referralLink.includes("?") ? "&" : "?";
-            referralLink += `${separator}urlCode=${encodeURIComponent(
-              urlCode
-            )}`;
+            // const separator = referralLink.includes("?") ? "&" : "?";
+            // referralLink += `${separator}urlCode=${encodeURIComponent(
+            //   urlCode
+            // )}`;
+            referralLink = `${API_PREFIX}/sp/referral-program/setup/track/${urlCode}`;
           }
           input.value = referralLink;
           input.readOnly = true;

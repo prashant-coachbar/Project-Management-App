@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Referral Lead Form</title>
+    <script>
+      (function (w, d, s, u) {
+        let j = d.createElement(s);
+        j.async = true;
+        j.src = "./Tracking/embeddingwidget.js?uid=" + u;
+        let f = d.getElementsByTagName(s)[0];
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "970a9a20-4f0f-43d1-ac43-3d6e9d0e19db");
+    </script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        margin: 0;
+        padding: 40px;
+      }
+
+      .container {
+        max-width: 500px;
+        margin: auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      label {
+        font-weight: 600;
+        margin-top: 15px;
+        display: block;
+      }
+
+      input[type="text"],
+      input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+
+      button {
+        background-color: #1e429f;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #143981;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Join Our Referral Program</h2>
+      <form id="referralForm">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" required />
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <label for="companyName">Company Name:</label>
+        <input type="text" id="companyName" name="companyName" required />
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      // Utility to get URL parameters
+      function getUrlParams(key) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(key);
+      }
+      // Hooking up form submit
+      document
+        .getElementById("referralForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const formData = {
+            firstName: document.getElementById("firstName").value.trim(),
+            lastName: document.getElementById("lastName").value.trim(),
+            email: document.getElementById("email").value.trim(),
+            companyName: document.getElementById("companyName").value.trim(),
+          };
+          trackify.trackLead(formData);
+        });
+    </script>
+  </body>
+</html>
