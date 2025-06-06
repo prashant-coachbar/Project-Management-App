@@ -101,6 +101,22 @@
         opacity: 1;
         align-self: center;
       }
+    .spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    width: 14px;
+    height: 14px;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
     `;
     document.head.appendChild(style);
   }
@@ -335,7 +351,9 @@
         });
         return;
       }
-
+      button.disabled = true;
+      const originalButtonText = button.textContent;
+      button.innerHTML = `<span class="spinner"></span>`;
       try {
         const response = await fetch(
           API_PREFIX + "/sc/referralProgram/trackParticipant",
@@ -362,24 +380,17 @@
         const res = await response.json();
         if (res.code === 200 && res.success) {
           const participantData = res.data?.participantDetail;
-          //   referralLink = participantData?.referralLink
-          //     ? API_PREFIX + participantData?.referralLink
-          //     : "";
           referralLink = participantData?.referralLink || "";
           const urlCode = participantData?.referrerCode;
 
           if (urlCode) {
-            // const separator = referralLink.includes("?") ? "&" : "?";
-            // referralLink += `${separator}urlCode=${encodeURIComponent(
-            //   urlCode
-            // )}`;
             referralLink = `${API_PREFIX}/sp/referral-program/setup/track/${urlCode}`;
           }
           input.value = referralLink;
           input.readOnly = true;
           input.style.backgroundColor = "#f0f0f0";
           label.textContent = "Your Referral Link:";
-          button.textContent = data.secondaryBtnText || "Copy Link";
+          button.innerHTML = data.secondaryBtnText || "Copy Link";
           button.style.backgroundColor = data?.secondaryBtnBgColor;
           button.style.color = data?.secondaryBtnTextColor;
           button.style.borderColor = data?.secondaryBtnBorderColor;
@@ -387,6 +398,13 @@
         }
       } catch (error) {
         console.error("Network or runtime error:", error);
+        errorMessage.textContent = "Something went wrong. Please try again.";
+        errorMessage.style.display = "block";
+      } finally {
+        if (!hasSubmitted) {
+          button.innerHTML = originalButtonText;
+        }
+        button.disabled = false;
       }
     });
 
