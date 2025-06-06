@@ -28,7 +28,7 @@ export default function NoProject() {
       {/* <div id="referral-widget"></div> */}
       {/* <div id="channelboost-form-container-456"></div> */}
 
-      <div id="5cc15417-a3c0-923a-b12c-019710e02aec"></div>
+      <div id="340ecb4d-bb1f-d23d-1896-019743cb6ced"></div>
     </div>
   );
 }
