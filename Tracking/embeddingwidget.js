@@ -28,8 +28,7 @@
       const email = formData?.email || "";
       const companyName = formData?.companyName || "";
 
-      let validData =
-        referrerCode && firstName && lastName && email && companyName;
+      let validData = referrerCode && email;
 
       if (!validData) {
         console.log("Data has missing fields or is incorrect");
