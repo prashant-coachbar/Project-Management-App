@@ -1,4 +1,4 @@
-(function () {
+(async function () {
   function getScriptParams() {
     let scripts = document.getElementsByTagName("script");
     for (let script of scripts) {
@@ -18,6 +18,9 @@
   const TENANT_ID = getScriptParams()?.userId;
   const API_PREFIX = "https://api-beta.channelboost.com";
   const LOCAL_API_PREFIX = "http://localhost:8080";
+  const PARTNER_DIRECTORY_API_KEY = "partner-directory";
+  const domainName = await getDomainName();
+  const REFERRAL_LINK_PREFIX = `${domainName ?? "referrer"}.coachbar.info/`;
   const trackify = {
     trackLead: function (formData = {}, attempt = 1) {
       console.log("Tracking event:", formData, attempt);
@@ -383,7 +386,7 @@
           const urlCode = participantData?.referrerCode;
 
           if (urlCode) {
-            referralLink = `${API_PREFIX}/sp/referral-program/setup/track/${urlCode}`;
+            referralLink = `${REFERRAL_LINK_PREFIX}${urlCode}`;
           }
           input.value = referralLink;
           input.readOnly = true;
@@ -524,6 +527,32 @@
       });
     } catch (error) {
       console.error("Error initializing referral widgets:", error);
+    }
+  }
+
+  async function getDomainName() {
+    try {
+      const response = await fetch(
+        `${API_PREFIX}/sc/referralProgram/subDomain`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tenantId: TENANT_ID,
+            domainType: PARTNER_DIRECTORY_API_KEY,
+          }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch domain Name");
+      }
+      const config = await response.json();
+      return config?.data?.data?.subDomain || null;
+    } catch (error) {
+      console.error("Error fetching Domain:", error);
+      return null;
     }
   }
 
